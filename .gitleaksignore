@@ -6,3 +6,7 @@
 7fa2ce3e55eaeebb9b17c8ab40b5affbc769c4cc:packages/dvilela/agents/vera/aea-config.yaml:generic-api-key:126
 7fa2ce3e55eaeebb9b17c8ab40b5affbc769c4cc:packages/dvilela/skills/vera_abci/skill.yaml:generic-api-key:88
 7fa2ce3e55eaeebb9b17c8ab40b5affbc769c4cc:packages/dvilela/services/vera/service.yaml:generic-api-key:60
+4ad104f0dd9cd59361a00d4974ecc2bb3d4c867a:packages/dvilela/services/vera/service.yaml:generic-api-key:60
+4ad104f0dd9cd59361a00d4974ecc2bb3d4c867a:packages/dvilela/agents/vera/aea-config.yaml:generic-api-key:126
+4ad104f0dd9cd59361a00d4974ecc2bb3d4c867a:packages/dvilela/skills/vera_chained_abci/skill.yaml:generic-api-key:83
+4ad104f0dd9cd59361a00d4974ecc2bb3d4c867a:packages/dvilela/skills/vera_abci/skill.yaml:generic-api-key:88
