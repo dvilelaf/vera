@@ -1,0 +1,28 @@
+name: twikit
+author: dvilela
+version: 0.1.0
+type: connection
+description: A connection that provides a wrapper around the Twikit library.
+license: Apache-2.0
+aea_version: '>=1.0.0, <2.0.0'
+fingerprint:
+  __init__.py: bafybeiaism4qxp36o6dflr3emtu4hk37dw7evimcoqkvlvt5s42af5lr5m
+  connection.py: bafybeicz3bhxndj5wje53455cty2xzhfe5b3ijfb6zf4o42tjawsmkftzq
+  readme.md: bafybeihl7k3yi3twtvlkjntaknmib6hnhmyjurn25c4nksffcagrwkx5t4
+fingerprint_ignore_patterns: []
+connections: []
+protocols:
+- valory/srr:0.1.0:bafybeihrixgptxuqpf2s4nujypwlv5aed2nboozq5kl4c26cxw6r7si2x4
+class_name: TwikitConnection
+config:
+  twikit_username: null
+  twikit_email: null
+  twikit_password: null
+  twikit_cookies: null
+excluded_protocols: []
+restricted_to_protocols: []
+dependencies:
+  twikit:
+    version: ==2.1.3
+is_abstract: false
+cert_requests: []

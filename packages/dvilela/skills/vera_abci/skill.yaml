@@ -1,0 +1,172 @@
+name: vera_abci
+author: dvilela
+version: 0.1.0
+type: skill
+description: A skill that fact-checks misleading information online.
+license: Apache-2.0
+aea_version: '>=1.0.0, <2.0.0'
+fingerprint:
+  __init__.py: bafybeiclxl2rhq5t36l4vy6zejpsyo6w45cmfvkdwmgrwjqw3bphe3mw7q
+  behaviours.py: bafybeieysj7nz3hqbddy5s36azpb2uth5bjyrqwg3m2tyemijylf6w6224
+  dialogues.py: bafybeihz76wuyzojylgjjpamb42pii4e7v5bkzdhiopv5iu3g7ulod74lm
+  fsm_specification.yaml: bafybeigpbg7yuhpa6247qtwdeewh2liq3nrn6u5l77sx4n2z6kgc72ttuu
+  handlers.py: bafybeiglua77cyf7bp7pkfycz4iy7ui7pmxd5tixff45u4jw4lea5iklym
+  models.py: bafybeigcdr4pw3fyemnrytq5utgrf2f2xyz6g4zml7wsduzjwmealrpbe4
+  payloads.py: bafybeiaoj3rvemizcl7qakcwjkumfg74f3az2dsrrbhtf53aeeb3einwfu
+  prompts.py: bafybeifveg5zsy3sjn2ysstwhooahfy3sv7ifjskvxouxywwq64krtgb3m
+  rounds.py: bafybeiafl2co7kg2mitzihesrhsqmiofoq63cdwozogl667s726dvg5aea
+  subgraph.py: bafybeigme6r3cwiiu5l7r55rcbj7y37b62cxtlsnewpkbjqcbadwte32xm
+fingerprint_ignore_patterns: []
+connections:
+- dvilela/kv_store:0.1.0:bafybeiekugvb2kan4342hliluxl3h5och3fjwqoafdyttpcn57evvyztq4
+- dvilela/twikit:0.1.0:bafybeiff76iqbiwfmlrixollynsjib66dxvj6gnprltcf5tvfvs6wm3x54
+- dvilela/genai:0.1.0:bafybeifcrrfz6jwp437zutmrhtjjkruflauoa4go627c47haiv2r2ej2uq
+- valory/http_server:0.22.0:bafybeihpgu56ovmq4npazdbh6y6ru5i7zuv6wvdglpxavsckyih56smu7m
+contracts: []
+protocols:
+- valory/srr:0.1.0:bafybeihrixgptxuqpf2s4nujypwlv5aed2nboozq5kl4c26cxw6r7si2x4
+- dvilela/kv_store:0.1.0:bafybeihimf5f37uupxmugvagmaxworgmz7cxuqpikkyzlgldtbq46jbvci
+- valory/http:1.0.0:bafybeifugzl63kfdmwrxwphrnrhj7bn6iruxieme3a4ntzejf6kmtuwmae
+skills:
+- valory/abstract_round_abci:0.1.0:bafybeiar2yhzxacfe3qqamqhaihtlcimquwedffctw55sowx6rac3cm3ui
+behaviours:
+  main:
+    args: {}
+    class_name: VeraRoundBehaviour
+handlers:
+  abci:
+    args: {}
+    class_name: ABCIHandler
+  contract_api:
+    args: {}
+    class_name: ContractApiHandler
+  http:
+    args: {}
+    class_name: HttpHandler
+  ipfs:
+    args: {}
+    class_name: IpfsHandler
+  ledger_api:
+    args: {}
+    class_name: LedgerApiHandler
+  signing:
+    args: {}
+    class_name: SigningHandler
+  tendermint:
+    args: {}
+    class_name: TendermintHandler
+  srr:
+    args: {}
+    class_name: SrrHandler
+  kv_store:
+    args: {}
+    class_name: KvStoreHandler
+models:
+  abci_dialogues:
+    args: {}
+    class_name: AbciDialogues
+  benchmark_tool:
+    args:
+      log_dir: /logs
+    class_name: BenchmarkTool
+  contract_api_dialogues:
+    args: {}
+    class_name: ContractApiDialogues
+  http_dialogues:
+    args: {}
+    class_name: HttpDialogues
+  ipfs_dialogues:
+    args: {}
+    class_name: IpfsDialogues
+  ledger_api_dialogues:
+    args: {}
+    class_name: LedgerApiDialogues
+  params:
+    args:
+      cleanup_history_depth: 1
+      cleanup_history_depth_current: null
+      drand_public_key: 868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31
+      finalize_timeout: 60.0
+      genesis_config:
+        chain_id: chain-c4daS1
+        consensus_params:
+          block:
+            max_bytes: '22020096'
+            max_gas: '-1'
+            time_iota_ms: '1000'
+          evidence:
+            max_age_duration: '172800000000000'
+            max_age_num_blocks: '100000'
+            max_bytes: '1048576'
+          validator:
+            pub_key_types:
+            - ed25519
+          version: {}
+        genesis_time: '2022-05-20T16:00:21.735122717Z'
+        voting_power: '10'
+      history_check_timeout: 1205
+      ipfs_domain_name: null
+      keeper_allowed_retries: 3
+      keeper_timeout: 30.0
+      max_attempts: 10
+      max_healthcheck: 120
+      on_chain_service_id: null
+      request_retry_delay: 1.0
+      request_timeout: 10.0
+      reset_pause_duration: 10
+      reset_tendermint_after: 2
+      retry_attempts: 400
+      retry_timeout: 3
+      round_timeout_seconds: 30.0
+      service_id: vera
+      service_registry_address: null
+      setup:
+        all_participants:
+        - '0x0000000000000000000000000000000000000000'
+        consensus_threshold: null
+        safe_contract_address: '0x0000000000000000000000000000000000000000'
+      share_tm_config_on_startup: false
+      sleep_time: 1
+      tendermint_check_sleep_delay: 3
+      tendermint_com_url: http://localhost:8080
+      tendermint_max_retries: 5
+      tendermint_p2p_url: localhost:26656
+      tendermint_url: http://localhost:26657
+      tx_timeout: 10.0
+      ipfs_address: https://gateway.autonolas.tech/ipfs/
+      validate_timeout: 1205
+      default_chain_id: ethereum
+      service_endpoint: vera.dummy.com/
+      fact_checker_url: https://factchecktools.googleapis.com/v1alpha1/claims:search
+      fact_checker_language: en-US
+      fact_checker_query: elections
+      fact_checker_max_days: 3
+      fact_checker_api_key: null
+      enable_posting: true
+      max_tweets_per_period: 5
+    class_name: Params
+  requests:
+    args: {}
+    class_name: Requests
+  signing_dialogues:
+    args: {}
+    class_name: SigningDialogues
+  state:
+    args: {}
+    class_name: SharedState
+  tendermint_dialogues:
+    args: {}
+    class_name: TendermintDialogues
+  srr_dialogues:
+    args: {}
+    class_name: SrrDialogues
+  kv_store_dialogues:
+    args: {}
+    class_name: KvStoreDialogues
+dependencies:
+  twitter_text_parser:
+    version: ==3.0.0
+  textblob:
+    version: '>=0.18.0.post0'
+is_abstract: true
+customs: []

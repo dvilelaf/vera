@@ -1,0 +1,26 @@
+{
+    "twikit_connection": {
+        "id": 234,
+        "image_hash": "QmdQ3TWb2p8bo8JKC5F3K2RU7sEDDLyexDUpDEYjSiQoTK"
+    },
+    "genai_connection": {
+        "id": 235,
+        "image_hash": "Qmex4cfcNnUa24fmDHpuFn3gW1VcxHn57yHJHNEaHsKTSV"
+    },
+    "vera_skill": {
+        "id": 236,
+        "image_hash": "QmTHNjEYSPUqC5pLvajsNTkVSxVAJsKd7jtKmEHie4o3MA"
+    },
+    "vera_chained_skill": {
+        "id": 237,
+        "image_hash": "QmTHNjEYSPUqC5pLvajsNTkVSxVAJsKd7jtKmEHie4o3MA"
+    },
+    "vera_agent": {
+        "id": 39,
+        "image_hash": "QmTHNjEYSPUqC5pLvajsNTkVSxVAJsKd7jtKmEHie4o3MA"
+    },
+    "vera_service": {
+        "id": 34,
+        "image_hash": "QmTHNjEYSPUqC5pLvajsNTkVSxVAJsKd7jtKmEHie4o3MA"
+    }
+}

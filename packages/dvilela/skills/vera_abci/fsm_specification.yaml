@@ -1,0 +1,25 @@
+alphabet_in:
+- DONE
+- NO_MAJORITY
+- ROUND_TIMEOUT
+default_start_state: UpdateNewsPoolRound
+final_states:
+- FinishedPublishRound
+label: VeraAbciApp
+start_states:
+- UpdateNewsPoolRound
+states:
+- FinishedPublishRound
+- PostResponsesRound
+- UpdateNewsPoolRound
+- UpdateTweetsPoolRound
+transition_func:
+    (PostResponsesRound, DONE): FinishedPublishRound
+    (PostResponsesRound, NO_MAJORITY): UpdateTweetsPoolRound
+    (PostResponsesRound, ROUND_TIMEOUT): UpdateTweetsPoolRound
+    (UpdateNewsPoolRound, DONE): UpdateTweetsPoolRound
+    (UpdateNewsPoolRound, NO_MAJORITY): UpdateNewsPoolRound
+    (UpdateNewsPoolRound, ROUND_TIMEOUT): UpdateNewsPoolRound
+    (UpdateTweetsPoolRound, DONE): PostResponsesRound
+    (UpdateTweetsPoolRound, NO_MAJORITY): UpdateTweetsPoolRound
+    (UpdateTweetsPoolRound, ROUND_TIMEOUT): UpdateTweetsPoolRound

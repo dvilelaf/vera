@@ -1,0 +1,34 @@
+alphabet_in:
+- DONE
+- NO_MAJORITY
+- RESET_AND_PAUSE_TIMEOUT
+- ROUND_TIMEOUT
+default_start_state: RegistrationStartupRound
+final_states: []
+label: VeraChainedSkillAbciApp
+start_states:
+- RegistrationRound
+- RegistrationStartupRound
+states:
+- PostResponsesRound
+- RegistrationRound
+- RegistrationStartupRound
+- ResetAndPauseRound
+- UpdateNewsPoolRound
+- UpdateTweetsPoolRound
+transition_func:
+    (PostResponsesRound, DONE): ResetAndPauseRound
+    (PostResponsesRound, NO_MAJORITY): UpdateTweetsPoolRound
+    (PostResponsesRound, ROUND_TIMEOUT): UpdateTweetsPoolRound
+    (RegistrationRound, DONE): UpdateNewsPoolRound
+    (RegistrationRound, NO_MAJORITY): RegistrationRound
+    (RegistrationStartupRound, DONE): UpdateNewsPoolRound
+    (ResetAndPauseRound, DONE): UpdateNewsPoolRound
+    (ResetAndPauseRound, NO_MAJORITY): ResetAndPauseRound
+    (ResetAndPauseRound, RESET_AND_PAUSE_TIMEOUT): ResetAndPauseRound
+    (UpdateNewsPoolRound, DONE): UpdateTweetsPoolRound
+    (UpdateNewsPoolRound, NO_MAJORITY): UpdateNewsPoolRound
+    (UpdateNewsPoolRound, ROUND_TIMEOUT): UpdateNewsPoolRound
+    (UpdateTweetsPoolRound, DONE): PostResponsesRound
+    (UpdateTweetsPoolRound, NO_MAJORITY): UpdateTweetsPoolRound
+    (UpdateTweetsPoolRound, ROUND_TIMEOUT): UpdateTweetsPoolRound
