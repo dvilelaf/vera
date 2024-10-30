@@ -379,9 +379,7 @@ class UpdateTweetsPoolBehaviour(
                     continue
 
                 if not is_popular:
-                    self.context.logger.info(
-                        "Tweet is not very popular"
-                    )
+                    self.context.logger.info("Tweet is not very popular")
                     continue
 
                 # Add the new tweet

@@ -1,11 +1,11 @@
 {
     "dev": {
-        "connection/dvilela/twikit/0.1.0": "bafybeiff76iqbiwfmlrixollynsjib66dxvj6gnprltcf5tvfvs6wm3x54",
+        "connection/dvilela/twikit/0.1.0": "bafybeibi2mvq6kfuqzub5wlwo6bmztol24o2gxpo667sziyu3x6yr76fby",
         "connection/dvilela/genai/0.1.0": "bafybeifcrrfz6jwp437zutmrhtjjkruflauoa4go627c47haiv2r2ej2uq",
-        "skill/dvilela/vera_abci/0.1.0": "bafybeiavajsi6m37sykuy7rax5xrqyfmslzci52w6gzqbuqpdtexi3n5n4",
-        "skill/dvilela/vera_chained_abci/0.1.0": "bafybeigemsimpwkdsilwcieynoicgyadxnoez6m5sf56oxvfrxcj5yocae",
-        "agent/dvilela/vera/0.1.0": "bafybeif2twvo6g422sx3hfhs2xt3xlmygvtr6fnh5dzcmc5qepchwynsje",
-        "service/dvilela/vera/0.1.0": "bafybeictasdxarjxf7domzufwhfyyu3h2oam35pe3xrbxfh6e22x77b4ei"
+        "skill/dvilela/vera_abci/0.1.0": "bafybeifqx7ygabonx4bdcphzp5toyj6qzusr4tv5djaktsboi2btg23ts4",
+        "skill/dvilela/vera_chained_abci/0.1.0": "bafybeidmqjs355jgfqoprlwphw7zb42qanw4katnwkgd7kglwyikri3x64",
+        "agent/dvilela/vera/0.1.0": "bafybeigt7pfizkcysbozbxmw7dbghmw4mzm6gdxuuk6pyy2trygwtgkdsi",
+        "service/dvilela/vera/0.1.0": "bafybeif5ponbinjekqvkhm5uwvxzpjx65i2cbloipe73ahvfiwp7rrtitu"
     },
     "third_party": {
         "protocol/open_aea/signing/1.0.0": "bafybeihv62fim3wl2bayavfcg3u5e5cxu3b7brtu4cn5xoxd6lqwachasi",
