@@ -380,7 +380,7 @@ class UpdateTweetsPoolBehaviour(
 
                 if not is_popular:
                     self.context.logger.info(
-                        f"Tweet is not very popular [view_count={view_count}]"
+                        "Tweet is not very popular"
                     )
                     continue
 

@@ -27,12 +27,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Tuple, cast
 
+import twikit  # type: ignore
 from aea.configurations.base import PublicId
 from aea.connections.base import BaseSyncConnection
 from aea.mail.base import Envelope
 from aea.protocols.base import Address, Message
 from aea.protocols.dialogue.base import Dialogue
-from twikit import Client  # type: ignore
 
 from packages.valory.protocols.srr.dialogues import SrrDialogue
 from packages.valory.protocols.srr.dialogues import SrrDialogues as BaseSrrDialogues
@@ -41,7 +41,7 @@ from packages.valory.protocols.srr.message import SrrMessage
 
 PUBLIC_ID = PublicId.from_str("dvilela/twikit:0.1.0")
 
-cookies_path = Path("/", "tmp", "twikit_cookies.json")
+MAX_RETRIES = 5
 
 
 class SrrDialogues(BaseSrrDialogues):
@@ -102,8 +102,14 @@ class TwikitConnection(BaseSyncConnection):
         self.username = self.configuration.config.get("twikit_username")
         self.email = self.configuration.config.get("twikit_email")
         self.password = self.configuration.config.get("twikit_password")
-        self.cookies = self.configuration.config.get("twikit_cookies")
-        self.client = Client(language="en-US")
+        cookies_str = self.configuration.config.get("twikit_cookies")
+        self.cookies_path = Path(
+            self.configuration.config.get(
+                "twikit_cookies_path", "/tmp/twikit_cookies.json"  # nosec
+            )
+        )
+        self.cookies = json.loads(cookies_str) if cookies_str else None
+        self.client = twikit.Client(language="en-US")
 
         self.run_task(self.twikit_login)
         self.last_call = datetime.now(timezone.utc)
@@ -112,22 +118,15 @@ class TwikitConnection(BaseSyncConnection):
 
     def run_task(self, method: Callable, **kwargs: Any) -> Any:
         """Run asyncio task"""
-        loop = None
-
         try:
-            # Get the loop if it is already running
+            # Get the loop
             loop = asyncio.get_running_loop()
-        except RuntimeError:
-            # Start a new loop
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-
-        if loop.is_running():
-            # Do not stop the loop if it is already running
+            if loop.is_closed():
+                raise RuntimeError("Loop is closed")
+            # Run the task
             return asyncio.ensure_future(method(**kwargs))
-        else:
-            # If there is no loop, use run_until_complete
-            return loop.run_until_complete(method(**kwargs))
+        except RuntimeError:
+            return asyncio.run(method(**kwargs))
 
     def main(self) -> None:
         """
@@ -218,13 +217,21 @@ class TwikitConnection(BaseSyncConnection):
 
         self.logger.info(f"Calling twikit: {payload}")
 
-        try:
-            response = self.run_task(method, **payload.get("kwargs", {}))
-            self.logger.info(f"Twikit response: {response}")
-        except Exception as e:
-            return {"error": f"Exception while calling Twikit:\n{e}"}, True
+        retries = 0
+        while retries < MAX_RETRIES:
+            try:
+                response = self.run_task(method, **payload.get("kwargs", {}))
+                self.logger.info(f"Twikit response: {response}")
+                return {"response": response}, False  # type: ignore
+            except KeyError as e:
+                self.logger.error(f"Exception while calling Twikit:\n{e}. Retrying...")
+                retries += 1
+                time.sleep(1)
+                continue
+            except Exception as e:
+                return {"error": f"Exception while calling Twikit:\n{e}"}, True
 
-        return {"response": response}, False  # type: ignore
+        return {"error": "Error calling Twikit. Max amount of retries reached."}, True
 
     def on_connect(self) -> None:
         """
@@ -242,21 +249,23 @@ class TwikitConnection(BaseSyncConnection):
 
     async def twikit_login(self) -> None:
         """Login into Twitter"""
-
-        if not self.cookies and cookies_path.exists():
-            with open(cookies_path, "r", encoding="utf-8") as cookies_file:
+        if not self.cookies and self.cookies_path.exists():
+            self.logger.info(f"Loading Twitter cookies from {self.cookies_path}")
+            with open(self.cookies_path, "r", encoding="utf-8") as cookies_file:
                 self.cookies = json.load(cookies_file)
 
         if self.cookies:
-            self.client.set_cookies(json.loads(self.cookies))
+            self.logger.info("Set cookies")
+            self.client.set_cookies(self.cookies)
         else:
+            self.logger.info("Logging into Twitter with username and password")
             await self.client.login(
                 auth_info_1=self.username,
                 auth_info_2=self.email,
                 password=self.password,
             )
 
-        self.client.save_cookies(cookies_path)
+        self.client.save_cookies(self.cookies_path)
 
     async def search(
         self, query: str, product: str = "Top", count: int = 10
@@ -269,10 +278,29 @@ class TwikitConnection(BaseSyncConnection):
 
     async def post(self, tweets: List[Dict]) -> List[str]:
         """Post tweets"""
-        tweet_ids = []
+        tweet_ids: List[str] = []
+        is_first_tweet = True
+
         for tweet_kwargs in tweets:
-            result = await self.client.create_tweet(**tweet_kwargs)
-            tweet_ids.append(result.id)
+            if not is_first_tweet:
+                # If we have more than 1 tweet, we treat this as a thread
+                tweet_kwargs["reply_to"] = tweet_ids[-1]
+
+            self.logger.info(f"Posting: {tweet_kwargs}")
+
+            while True:
+                result = await self.client.create_tweet(**tweet_kwargs)
+
+                # Verify that the tweet exists
+                try:
+                    await self.client.get_tweet_by_id(result.id)
+                    tweet_ids.append(result.id)
+                    is_first_tweet = False
+                    break
+                except twikit.errors.TweetNotAvailable:
+                    self.logger.error("Failed to verify the tweet. Retrying...")
+                    continue
+
         return tweet_ids
 
 
