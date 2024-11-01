@@ -25,7 +25,7 @@ import json
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Tuple, cast
+from typing import Any, Callable, Dict, List, Optional, Tuple, cast
 
 import twikit  # type: ignore
 from aea.configurations.base import PublicId
@@ -41,7 +41,8 @@ from packages.valory.protocols.srr.message import SrrMessage
 
 PUBLIC_ID = PublicId.from_str("dvilela/twikit:0.1.0")
 
-MAX_RETRIES = 5
+MAX_POST_RETRIES = 5
+MAX_GET_RETRIES = 10
 
 
 class SrrDialogues(BaseSrrDialogues):
@@ -218,7 +219,7 @@ class TwikitConnection(BaseSyncConnection):
         self.logger.info(f"Calling twikit: {payload}")
 
         retries = 0
-        while retries < MAX_RETRIES:
+        while retries < MAX_POST_RETRIES:
             try:
                 response = self.run_task(method, **payload.get("kwargs", {}))
                 self.logger.info(f"Twikit response: {response}")
@@ -277,31 +278,76 @@ class TwikitConnection(BaseSyncConnection):
         return [tweet_to_json(t) for t in tweets]
 
     async def post(self, tweets: List[Dict]) -> List[str]:
-        """Post tweets"""
+        """Post a thread"""
         tweet_ids: List[str] = []
         is_first_tweet = True
 
+        # Iterate the thread
         for tweet_kwargs in tweets:
             if not is_first_tweet:
-                # If we have more than 1 tweet, we treat this as a thread
                 tweet_kwargs["reply_to"] = tweet_ids[-1]
 
-            self.logger.info(f"Posting: {tweet_kwargs}")
+            tweet_id = await self.post_tweet(**tweet_kwargs)
+            tweet_ids.append(tweet_id)
+            is_first_tweet = False
 
-            while True:
-                result = await self.client.create_tweet(**tweet_kwargs)
+            # Stop posting if any tweet fails
+            if tweet_id is None:
+                break
 
-                # Verify that the tweet exists
-                try:
-                    await self.client.get_tweet_by_id(result.id)
-                    tweet_ids.append(result.id)
-                    is_first_tweet = False
-                    break
-                except twikit.errors.TweetNotAvailable:
-                    self.logger.error("Failed to verify the tweet. Retrying...")
+        # If any tweet failed to be created, remove all the thread
+        if None in tweet_ids:
+            for tweet_id in tweet_ids:
+                # Skip tweets that failed
+                if not tweet_id:
                     continue
+                await self.delete_tweet(tweet_id)
+
+            return [None] * len(tweet_ids)
 
         return tweet_ids
+
+    async def post_tweet(self, **kwargs) -> Optional[str]:
+        """Post a single tweet"""
+        tweet_id = None
+
+        # Post the tweet
+        retries = 0
+        while retries < MAX_POST_RETRIES:
+            try:
+                self.logger.info(f"Posting: {kwargs}")
+                result = await self.client.create_tweet(**kwargs)
+                tweet_id = result.id
+                break
+            except Exception as e:
+                self.logger.error(f"Failed to create the tweet: {e}. Retrying...")
+                retries += 1
+
+        # Verify that the tweet exists
+        retries = 0
+        while retries < MAX_GET_RETRIES:
+            try:
+                await self.client.get_tweet_by_id(tweet_id)
+                return tweet_id
+            except twikit.errors.TweetNotAvailable:
+                self.logger.error("Failed to verify the tweet. Retrying...")
+                retries += 1
+                continue
+
+        return None
+
+    async def delete_tweet(self, tweet_id) -> None:
+        """Delete a tweet"""
+        # Delete the tweet
+        retries = 0
+        while retries < MAX_POST_RETRIES:
+            try:
+                self.logger.info(f"Deleting tweet {tweet_id}")
+                await self.client.delete_tweet(tweet_id)
+                break
+            except Exception as e:
+                self.logger.error(f"Failed to delete the tweet: {e}. Retrying...")
+                retries += 1
 
 
 def tweet_to_json(tweet: Any) -> Dict:
