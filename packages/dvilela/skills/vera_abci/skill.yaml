@@ -19,7 +19,7 @@ fingerprint:
 fingerprint_ignore_patterns: []
 connections:
 - dvilela/kv_store:0.1.0:bafybeiekugvb2kan4342hliluxl3h5och3fjwqoafdyttpcn57evvyztq4
-- dvilela/twikit:0.1.0:bafybeidy3tszr6fomc3t5guliavvkisyrezoqhqhqywt4biilcb4fqqfue
+- dvilela/twikit:0.1.0:bafybeifzooder66ku3o3x5mc5ur7nzafoat34qmkjncw5n2wnmirxv3juq
 - dvilela/genai:0.1.0:bafybeifcrrfz6jwp437zutmrhtjjkruflauoa4go627c47haiv2r2ej2uq
 - valory/http_server:0.22.0:bafybeihpgu56ovmq4npazdbh6y6ru5i7zuv6wvdglpxavsckyih56smu7m
 contracts: []

@@ -277,9 +277,9 @@ class TwikitConnection(BaseSyncConnection):
         )
         return [tweet_to_json(t) for t in tweets]
 
-    async def post(self, tweets: List[Dict]) -> List[str]:
+    async def post(self, tweets: List[Dict]) -> List[Optional[str]]:
         """Post a thread"""
-        tweet_ids: List[str] = []
+        tweet_ids: List[Optional[str]] = []
         is_first_tweet = True
 
         # Iterate the thread
@@ -307,7 +307,7 @@ class TwikitConnection(BaseSyncConnection):
 
         return tweet_ids
 
-    async def post_tweet(self, **kwargs) -> Optional[str]:
+    async def post_tweet(self, **kwargs: Any) -> Optional[str]:
         """Post a single tweet"""
         tweet_id = None
 
@@ -336,7 +336,7 @@ class TwikitConnection(BaseSyncConnection):
 
         return None
 
-    async def delete_tweet(self, tweet_id) -> None:
+    async def delete_tweet(self, tweet_id: str) -> None:
         """Delete a tweet"""
         # Delete the tweet
         retries = 0
