@@ -42,7 +42,6 @@ PATH_TO_VAR = {
     "models/params/args/fact_checker_api_key": "FACT_CHECKER_API_KEY",
     "models/params/args/enable_posting": "ENABLE_POSTING",
     "models/params/args/on_chain_service_id": "ON_CHAIN_SERVICE_ID",
-    "models/params/args/max_tweets_per_period": "MAX_TWEETS_PER_PERIOD",
     # Twikit connection
     "config/twikit_username": "TWIKIT_USERNAME",
     "config/twikit_email": "TWIKIT_EMAIL",
@@ -101,7 +100,10 @@ def main() -> None:
 
     # Search and replace all the secrets
     for path, var in PATH_TO_VAR.items():
-        config = find_and_replace(config, path.split("/"), os.getenv(var))
+        try:
+            config = find_and_replace(config, path.split("/"), os.getenv(var))
+        except:
+            raise ValueError(f"Could not replace {path}")
 
     # Dump the updated config
     with open(Path(AGENT_NAME, "aea-config.yaml"), "w", encoding="utf-8") as file:
