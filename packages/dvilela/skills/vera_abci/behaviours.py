@@ -458,7 +458,9 @@ class PostResponsesBehaviour(VeraBaseBehaviour):  # pylint: disable=too-many-anc
             claim_review = fake_new["claimReview"][0]  # Get the first review only
             prompt = FACT_CHECK_PROMPT.format(
                 title=tweet["fake_new"],
-                claimer=claim_review["publisher"]["name"],
+                claimer=claim_review["publisher"].get(
+                    "name", claim_review["publisher"].get("site")
+                ),
                 rating=claim_review["textualRating"],
                 url=claim_review["url"],
                 tweet=tweet["text"],
