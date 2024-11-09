@@ -223,6 +223,10 @@ class TwikitConnection(BaseSyncConnection):
             try:
                 response = self.run_task(method, **payload.get("kwargs", {}))
                 self.logger.info(f"Twikit response: {response}")
+
+                if response == [None]:
+                    return {"error": "Could not post the tweet(s)"}, True
+
                 return {"response": response}, False  # type: ignore
             except KeyError as e:
                 self.logger.error(f"Exception while calling Twikit:\n{e}. Retrying...")
@@ -303,7 +307,7 @@ class TwikitConnection(BaseSyncConnection):
                     continue
                 await self.delete_tweet(tweet_id)
 
-            return [None] * len(tweet_ids)
+            return [None]
 
         return tweet_ids
 
